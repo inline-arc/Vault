@@ -96,12 +96,12 @@ if len(st.session_state['wiki_text']) != 0:
             st.markdown(t)
 
 if st.session_state['input_method'] != "wikipedia":
-    st.button("find wiki pages")
-    if "wiki_suggestions" in st.session_state:
-            st.button("generate", on_click=generate_graph, key="gen_graph")
-
-# else:
-#     st.button("generate", on_click=generate_graph, key="gen_graph2")
+    # st.button("find wiki pages")
+    # if "wiki_suggestions" in st.session_state:
+    #         st.button("generate", on_click=generate_graph, key="gen_graph")
+    pass
+else:
+    st.button("generate", on_click=generate_graph, key="gen_graph2")
 
 
 if st.session_state['has_run']:
