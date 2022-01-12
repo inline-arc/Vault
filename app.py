@@ -66,7 +66,6 @@ def add_text(term):
     except wikipedia.DisambiguationError as e:
         st.session_state["nodes"].remove(term)
 
-
 def reset_session():
     for k in state_variables:
         del st.session_state[k]
@@ -80,14 +79,14 @@ st.session_state['input_method'] = "wikipedia"
 
 if st.session_state['input_method'] != "wikipedia":
     st.text_area("Your text", key="text")
-else:
-    st.text_input("wikipedia search term",on_change=show_suggestion, key="text")
+# else:
+#     st.text_input("wikipedia search term",on_change=show_suggestion, key="text")
 
 if len(st.session_state['wiki_suggestions']) != 0:
     columns = st.columns([1] * len(st.session_state['wiki_suggestions']))
     for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'])):
         with c:
-            st.button(s, on_click=show_wiki_text, args=(s,), key=i)
+            st.button(s, on_click=show_wiki_text, args=(s,), key=str(i)+s)
 
 if len(st.session_state['wiki_text']) != 0:
     for t in st.session_state['wiki_text']:
@@ -112,8 +111,8 @@ if st.session_state['has_run']:
         components.html(source_code, height=1500,width=1500)
     with cols[1]:
         st.text("expand")
-        for s in st.session_state["nodes"]:
-            st.button(s, on_click=add_text, args=(s,))
+        for i,s in enumerate(st.session_state["nodes"]):
+            st.button(s, on_click=add_text, args=(s,) key=s+str(i))
 
 
 
