@@ -42,6 +42,7 @@ def generate_graph():
     st.success('Done!')
 
 def show_suggestion():
+    reset_session()
     with st.spinner(text="fetching wiki topics..."):
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
