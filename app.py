@@ -16,7 +16,8 @@ state_variables = {
     'has_run':False,
     'wiki_suggestions': [],
     'wiki_text' : [],
-    'nodes':[]
+    'nodes':[],
+    "topics":[]
 }
 
 for k, v in state_variables.items():
@@ -35,8 +36,13 @@ def generate_graph():
         return
     with st.spinner(text="Generating graph..."):
         texts = st.session_state['wiki_text']
+        st.session_state['nodes'] = []
         nodes = rebel.generate_knowledge_graph(texts, network_filename)
-        st.session_state['nodes'] = nodes
+        print("gen_graph", nodes)
+        for n in nodes:
+            n = n.lower()
+            if n not in st.session_state['topics']:
+                st.session_state['nodes'].append(n)
         st.session_state['has_run'] = True
     st.success('Done!')
 
@@ -55,6 +61,7 @@ def show_wiki_text(page_title):
         try:
             page = wikipedia.page(title=page_title, auto_suggest=False)
             st.session_state['wiki_text'].append(clip_text(page.summary))
+            st.session_state['topics'].append(page_title.lower())
         except wikipedia.DisambiguationError as e:
             with st.spinner(text="Woops, ambigious term, recalculating options..."):
                 st.session_state['wiki_suggestions'].remove(page_title)
@@ -65,6 +72,7 @@ def add_text(term):
     try:
         extra_text = clip_text(wikipedia.page(title=term, auto_suggest=True).summary)
         st.session_state['wiki_text'].append(extra_text)
+        st.session_state['topics'].append(term.lower())
     except wikipedia.WikipediaException:
         st.error("Woops, no wikipedia page for this node")
         st.session_state["nodes"].remove(term)
@@ -104,12 +112,9 @@ else:
         st.button("Search", on_click=show_suggestion, key="show_suggestion_key")
 
 if len(st.session_state['wiki_suggestions']) != 0:
-
     num_buttons = len(st.session_state['wiki_suggestions'])
-    num_cols = num_buttons if num_buttons < 7 else 7
-    columns = st.columns([1] * num_cols + [1])
-    print(st.session_state['wiki_suggestions'])
-
+    num_cols = num_buttons if num_buttons < 8 else 8
+    columns = st.columns([1] * num_cols )
     for q in range(1 + num_buttons//num_cols):
         for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
             with c:
@@ -141,14 +146,19 @@ if st.session_state['has_run']:
 """
 )
 
-    cols = st.columns([5, 1])
-    with cols[0]:
-        HtmlFile = open(network_filename, 'r', encoding='utf-8')
-        source_code = HtmlFile.read()
-        components.html(source_code, height=2000,width=2000)
-    with cols[1]:
-        for i,s in enumerate(st.session_state["nodes"]):
-            st.button(s, on_click=add_text, args=(s,), key=s+str(i))
+    HtmlFile = open(network_filename, 'r', encoding='utf-8')
+    source_code = HtmlFile.read()
+    components.html(source_code, width=720, height=600)
+
+    num_buttons = len(st.session_state["nodes"])
+    num_cols = num_buttons if num_buttons < 7 else 7
+    columns = st.columns([1] * num_cols + [1])
+    print(st.session_state["nodes"])
+
+    for q in range(1 + num_buttons//num_cols):
+        for i, (c, s) in enumerate(zip(columns, st.session_state["nodes"][q*num_cols: (q+1)*num_cols])):
+            with c:
+                st.button(s, on_click=add_text, args=(s,), key=str(i)+s)
 
 
 

@@ -43,14 +43,17 @@ def generate_knowledge_graph(texts: List[str], filename: str):
     heads = [ t["head"].lower() for t in triplets]
     tails = [ t["tail"].lower() for t in triplets]
 
-    nodes = set(heads + tails)
-    net = Network(directed=True)
+    nodes = list(set(heads + tails))
+    net = Network(directed=True, width="700px", height="700px")
 
     for n in nodes:
         if n in NERs:
             NER_type = NER_types[NERs.index(n)]
-            color = DEFAULT_LABEL_COLORS[NER_type]
-            net.add_node(n, title=NER_type, shape="circle", color=color)
+            if NER_type in NER_types:
+                color = DEFAULT_LABEL_COLORS[NER_type]
+                net.add_node(n, title=NER_type, shape="circle", color=color)
+            else:
+                net.add_node(n, shape="circle")
         else:
             net.add_node(n, shape="circle")
 
