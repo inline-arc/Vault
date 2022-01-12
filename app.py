@@ -14,7 +14,7 @@ network_filename = "test.html"
 
 state_variables = {
     'has_run':False,
-    'wiki_suggestions': "",
+    'wiki_suggestions': [],
     'wiki_text' : [],
     'nodes':[]
 }
@@ -23,9 +23,8 @@ for k, v in state_variables.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
-def clip_text(t, lenght = 5):
+def clip_text(t, lenght = 10):
     return ".".join(t.split(".")[:lenght]) + "."
-
 
 
 def generate_graph():
@@ -42,12 +41,14 @@ def generate_graph():
     st.success('Done!')
 
 def show_suggestion():
-    reset_session()
+    st.session_state['wiki_suggestions'] = []
     with st.spinner(text="fetching wiki topics..."):
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
             if text is not None:
-                st.session_state['wiki_suggestions'] = wikipedia.search(text, results = 3)
+                subjects = text.split(",")
+                for subj in subjects:
+                    st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
 
 def show_wiki_text(page_title):
     with st.spinner(text="fetching wiki page..."):
@@ -64,7 +65,8 @@ def add_text(term):
     try:
         extra_text = clip_text(wikipedia.page(title=term, auto_suggest=True).summary)
         st.session_state['wiki_text'].append(extra_text)
-    except wikipedia.DisambiguationError as e:
+    except wikipedia.WikipediaException:
+        st.error("Woops, no wikipedia page for this node")
         st.session_state["nodes"].remove(term)
 
 def reset_session():
@@ -74,6 +76,17 @@ def reset_session():
 st.title('REBELious knowledge graph generation')
 st.session_state['input_method'] = "wikipedia"
 
+st.sidebar.markdown(
+"""
+# how to
+- Enter wikipedia search terms, separated by comma's
+- Choose one or more of the suggested pages
+- Click generate!
+"""
+)
+
+st.sidebar.button("Reset", on_click=reset_session, key="reset_key")
+
 # st.selectbox(
 #      'input method',
 #      ('wikipedia', 'free text'),  key="input_method")
@@ -82,13 +95,25 @@ if st.session_state['input_method'] != "wikipedia":
     # st.text_area("Your text", key="text")
     pass
 else:
-    st.text_input("wikipedia search term",on_change=show_suggestion, key="text")
+    cols = st.columns([8, 1])
+    with cols[0]:
+        st.text_input("wikipedia search term", on_change=show_suggestion, key="text")
+    with cols[1]:
+        st.text('')
+        st.text('')
+        st.button("Search", on_click=show_suggestion, key="show_suggestion_key")
 
 if len(st.session_state['wiki_suggestions']) != 0:
-    columns = st.columns([1] * len(st.session_state['wiki_suggestions']))
-    for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'])):
-        with c:
-            st.button(s, on_click=show_wiki_text, args=(s,), key=str(i)+s)
+
+    num_cols = 10
+    num_buttons = len(st.session_state['wiki_suggestions'])
+    columns = st.columns([1] * num_cols + [1])
+    print(st.session_state['wiki_suggestions'])
+
+    for q in range(1 + num_buttons//num_cols):
+        for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
+            with c:
+                st.button(s, on_click=show_wiki_text, args=(s,), key=str(i)+s)
 
 if len(st.session_state['wiki_text']) != 0:
     for i, t in enumerate(st.session_state['wiki_text']):
@@ -102,17 +127,26 @@ if st.session_state['input_method'] != "wikipedia":
     #         st.button("generate", on_click=generate_graph, key="gen_graph")
     pass
 else:
-    st.button("generate", on_click=generate_graph, key="gen_graph")
+    if len(st.session_state['wiki_text']) > 0:
+        st.button("Generate", on_click=generate_graph, key="gen_graph")
 
 
 if st.session_state['has_run']:
-    cols = st.columns([4, 1])
+    st.sidebar.markdown(
+    """
+# How to expand the graph
+- Click a button on the right to expand that node
+- Only nodes that have wiki pages will be expanded
+- Hit the Generate button again to expand your graph!
+"""
+)
+
+    cols = st.columns([5, 1])
     with cols[0]:
         HtmlFile = open(network_filename, 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, height=2000,width=2000)
     with cols[1]:
-        st.text("expand")
         for i,s in enumerate(st.session_state["nodes"]):
             st.button(s, on_click=add_text, args=(s,), key=s+str(i))
 
