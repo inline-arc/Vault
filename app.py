@@ -101,7 +101,7 @@ if st.session_state['input_method'] != "wikipedia":
     #         st.button("generate", on_click=generate_graph, key="gen_graph")
     pass
 else:
-    st.button("generate", on_click=generate_graph, key="gen_graph2")
+    st.button("generate", on_click=generate_graph, key="gen_graph")
 
 
 if st.session_state['has_run']:
