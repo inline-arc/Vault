@@ -105,8 +105,8 @@ else:
 
 if len(st.session_state['wiki_suggestions']) != 0:
 
-    num_cols = 10
     num_buttons = len(st.session_state['wiki_suggestions'])
+    num_cols = num_buttons if num_buttoms < 7 else 7
     columns = st.columns([1] * num_cols + [1])
     print(st.session_state['wiki_suggestions'])
 
