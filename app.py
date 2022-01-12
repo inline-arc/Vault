@@ -99,8 +99,8 @@ if st.session_state['input_method'] != "wikipedia":
     if "wiki_suggestions" in st.session_state:
             st.button("generate", on_click=generate_graph, key="gen_graph")
 
-else:
-    st.button("generate", on_click=generate_graph, key="gen_graph2")
+# else:
+#     st.button("generate", on_click=generate_graph, key="gen_graph2")
 
 
 if st.session_state['has_run']:
