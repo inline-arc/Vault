@@ -91,8 +91,8 @@ if len(st.session_state['wiki_suggestions']) != 0:
             st.button(s, on_click=show_wiki_text, args=(s,), key=str(i)+s)
 
 if len(st.session_state['wiki_text']) != 0:
-    for t in st.session_state['wiki_text']:
-        new_expander = st.expander(label=t[:30] + "...")
+    for i, t in enumerate(st.session_state['wiki_text']):
+        new_expander = st.expander(label=t[:30] + "...", expanded=(i==0))
         with new_expander:
             st.markdown(t)
 
@@ -110,7 +110,7 @@ if st.session_state['has_run']:
     with cols[0]:
         HtmlFile = open(network_filename, 'r', encoding='utf-8')
         source_code = HtmlFile.read()
-        components.html(source_code, height=1500,width=1500)
+        components.html(source_code, height=2000,width=2000)
     with cols[1]:
         st.text("expand")
         for i,s in enumerate(st.session_state["nodes"]):
