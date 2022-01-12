@@ -78,9 +78,10 @@ st.session_state['input_method'] = "wikipedia"
 #      ('wikipedia', 'free text'),  key="input_method")
 
 if st.session_state['input_method'] != "wikipedia":
-    st.text_area("Your text", key="text")
-# else:
-#     st.text_input("wikipedia search term",on_change=show_suggestion, key="text")
+    # st.text_area("Your text", key="text")
+    pass
+else:
+    st.text_input("wikipedia search term",on_change=show_suggestion, key="text")
 
 if len(st.session_state['wiki_suggestions']) != 0:
     columns = st.columns([1] * len(st.session_state['wiki_suggestions']))
