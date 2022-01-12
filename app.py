@@ -112,7 +112,7 @@ if st.session_state['has_run']:
     with cols[1]:
         st.text("expand")
         for i,s in enumerate(st.session_state["nodes"]):
-            st.button(s, on_click=add_text, args=(s,) key=s+str(i))
+            st.button(s, on_click=add_text, args=(s,), key=s+str(i))
 
 
 
