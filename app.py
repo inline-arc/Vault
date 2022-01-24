@@ -9,10 +9,11 @@ from streamlit.state.session_state import SessionState
 from streamlit.type_util import Key
 import rebel
 import wikipedia
+from utils import clip_text
 
-network_filename = "test.html"
+GRAPH_FILENAME = "test.html"
 
-state_variables = {
+wiki_state_variables = {
     'has_run':False,
     'wiki_suggestions': [],
     'wiki_text' : [],
@@ -20,15 +21,16 @@ state_variables = {
     "topics":[]
 }
 
-for k, v in state_variables.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+free_text_state_variables = {
+    'has_run':False,
+}
 
-def clip_text(t, lenght = 10):
-    return ".".join(t.split(".")[:lenght]) + "."
+def wiki_init_state_variables():
+    for k, v in wiki_state_variables.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
 
-
-def generate_graph():
+def wiki_generate_graph():
     if 'wiki_text' not in st.session_state:
         return
     if len(st.session_state['wiki_text']) == 0:
@@ -37,7 +39,7 @@ def generate_graph():
     with st.spinner(text="Generating graph..."):
         texts = st.session_state['wiki_text']
         st.session_state['nodes'] = []
-        nodes = rebel.generate_knowledge_graph(texts, network_filename)
+        nodes = rebel.generate_knowledge_graph(texts, GRAPH_FILENAME)
         print("gen_graph", nodes)
         for n in nodes:
             n = n.lower()
@@ -46,7 +48,7 @@ def generate_graph():
         st.session_state['has_run'] = True
     st.success('Done!')
 
-def show_suggestion():
+def wiki_show_suggestion():
     st.session_state['wiki_suggestions'] = []
     with st.spinner(text="fetching wiki topics..."):
         if st.session_state['input_method'] == "wikipedia":
@@ -56,7 +58,7 @@ def show_suggestion():
                 for subj in subjects:
                     st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
 
-def show_wiki_text(page_title):
+def wiki_show_text(page_title):
     with st.spinner(text="fetching wiki page..."):
         try:
             page = wikipedia.page(title=page_title, auto_suggest=False)
@@ -68,23 +70,41 @@ def show_wiki_text(page_title):
                 temp = st.session_state['wiki_suggestions'] + e.options[:3]
                 st.session_state['wiki_suggestions'] = list(set(temp))
 
-def add_text(term):
+def wiki_add_text(term):
     try:
-        extra_text = clip_text(wikipedia.page(title=term, auto_suggest=True).summary)
+        extra_text = clip_text(wikipedia.page(title=term, auto_suggest=False).summary)
         st.session_state['wiki_text'].append(extra_text)
         st.session_state['topics'].append(term.lower())
+    except wikipedia.DisambiguationError as e:
+        with st.spinner(text="Woops, ambigious term, recalculating options..."):
+            st.session_state['nodes'].remove(term)
+            temp = st.session_state['nodes'] + e.options[:3]
+            st.session_state['node'] = list(set(temp))
     except wikipedia.WikipediaException:
-        st.error("Woops, no wikipedia page for this node")
-        st.session_state["nodes"].remove(term)
+        st.session_state['nodes'].remove(term)
 
-def reset_session():
-    for k in state_variables:
+def wiki_reset_session():
+    for k in wiki_state_variables:
         del st.session_state[k]
 
-st.title('REBELious knowledge graph generation')
-st.session_state['input_method'] = "wikipedia"
+def free_text_generate():
+    text = st.session_state['free_text']
+    rebel.generate_knowledge_graph([text], GRAPH_FILENAME)
+    st.session_state['has_run'] = True
 
-st.sidebar.markdown(
+def free_text_layout():
+    st.text_input("Free text", key="free_text")
+    st.button("Generate", on_click=free_text_generate, key="free_text_generate")
+
+
+st.title('REBELious knowledge graph generation')
+st.selectbox(
+     'input method',
+     ('wikipedia', 'free text'),  key="input_method")
+
+
+def show_wiki_hub_page():
+    st.sidebar.markdown(
 """
 # how to
 - Enter wikipedia search terms, separated by comma's
@@ -92,76 +112,86 @@ st.sidebar.markdown(
 - Click generate!
 """
 )
-
-st.sidebar.button("Reset", on_click=reset_session, key="reset_key")
-
-# st.selectbox(
-#      'input method',
-#      ('wikipedia', 'free text'),  key="input_method")
-
-if st.session_state['input_method'] != "wikipedia":
-    # st.text_area("Your text", key="text")
-    pass
-else:
+    st.sidebar.button("Reset", on_click=wiki_reset_session, key="reset_key")
     cols = st.columns([8, 1])
     with cols[0]:
-        st.text_input("wikipedia search term", on_change=show_suggestion, key="text")
+        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text")
     with cols[1]:
         st.text('')
         st.text('')
-        st.button("Search", on_click=show_suggestion, key="show_suggestion_key")
+        st.button("Search", on_click=wiki_show_suggestion, key="show_suggestion_key")
 
-if len(st.session_state['wiki_suggestions']) != 0:
-    num_buttons = len(st.session_state['wiki_suggestions'])
-    num_cols = num_buttons if num_buttons < 8 else 8
-    columns = st.columns([1] * num_cols )
-    for q in range(1 + num_buttons//num_cols):
-        for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
-            with c:
-                st.button(s, on_click=show_wiki_text, args=(s,), key=str(i)+s)
+    if len(st.session_state['wiki_suggestions']) != 0:
+        num_buttons = len(st.session_state['wiki_suggestions'])
+        num_cols = num_buttons if num_buttons < 8 else 8
+        columns = st.columns([1] * num_cols )
+        for q in range(1 + num_buttons//num_cols):
+            for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
+                with c:
+                    st.button(s, on_click=wiki_show_text, args=(s,), key=str(i)+s)
 
-if len(st.session_state['wiki_text']) != 0:
-    for i, t in enumerate(st.session_state['wiki_text']):
-        new_expander = st.expander(label=t[:30] + "...", expanded=(i==0))
-        with new_expander:
-            st.markdown(t)
+    if len(st.session_state['wiki_text']) != 0:
+        for i, t in enumerate(st.session_state['wiki_text']):
+            new_expander = st.expander(label=t[:30] + "...", expanded=(i==0))
+            with new_expander:
+                st.markdown(t)
 
-if st.session_state['input_method'] != "wikipedia":
-    # st.button("find wiki pages")
-    # if "wiki_suggestions" in st.session_state:
-    #         st.button("generate", on_click=generate_graph, key="gen_graph")
-    pass
-else:
     if len(st.session_state['wiki_text']) > 0:
-        st.button("Generate", on_click=generate_graph, key="gen_graph")
+        st.button("Generate", on_click=wiki_generate_graph, key="gen_graph")
 
+    if st.session_state['has_run']:
+        st.sidebar.markdown(
+            """
+        # How to expand the graph
+        - Click a button on the right to expand that node
+        - Only nodes that have wiki pages will be expanded
+        - Hit the Generate button again to expand your graph!
+        """
+        )
 
-if st.session_state['has_run']:
+        HtmlFile = open(GRAPH_FILENAME, 'r', encoding='utf-8')
+        source_code = HtmlFile.read()
+        components.html(source_code, width=720, height=600)
+
+        num_buttons = len(st.session_state["nodes"])
+        num_cols = num_buttons if num_buttons < 7 else 7
+        columns = st.columns([1] * num_cols + [1])
+        print(st.session_state["nodes"])
+
+        for q in range(1 + num_buttons//num_cols):
+            for i, (c, s) in enumerate(zip(columns, st.session_state["nodes"][q*num_cols: (q+1)*num_cols])):
+                with c:
+                    st.button(s, on_click=wiki_add_text, args=(s,), key=str(i)+s)
+
+def show_free_text_hub_page():
     st.sidebar.markdown(
-    """
-# How to expand the graph
-- Click a button on the right to expand that node
-- Only nodes that have wiki pages will be expanded
-- Hit the Generate button again to expand your graph!
+"""
+# How to
+- Enter a text you'd like to see as a graph.
+- Click generate!
 """
 )
+    st.sidebar.button("Reset", key="reset_key")
+    free_text_layout()
+    if st.session_state['has_run']:
+        st.sidebar.markdown(
+            """
+        # How to expand the graph
+        - Click a button on the right to expand that node
+        - Only nodes that have wiki pages will be expanded
+        - Hit the Generate button again to expand your graph!
+        """
+        )
 
-    HtmlFile = open(network_filename, 'r', encoding='utf-8')
-    source_code = HtmlFile.read()
-    components.html(source_code, width=720, height=600)
-
-    num_buttons = len(st.session_state["nodes"])
-    num_cols = num_buttons if num_buttons < 7 else 7
-    columns = st.columns([1] * num_cols + [1])
-    print(st.session_state["nodes"])
-
-    for q in range(1 + num_buttons//num_cols):
-        for i, (c, s) in enumerate(zip(columns, st.session_state["nodes"][q*num_cols: (q+1)*num_cols])):
-            with c:
-                st.button(s, on_click=add_text, args=(s,), key=str(i)+s)
+        HtmlFile = open(GRAPH_FILENAME, 'r', encoding='utf-8')
+        source_code = HtmlFile.read()
+        components.html(source_code, width=720, height=600)
 
 
-
-
+if st.session_state['input_method'] == "wikipedia":
+    wiki_init_state_variables()
+    show_wiki_hub_page()
+else:
+    show_free_text_hub_page()
 
 

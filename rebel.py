@@ -2,7 +2,6 @@ from typing import List
 from transformers import pipeline
 from pyvis.network import Network
 from functools import lru_cache
-from app import generate_graph
 import spacy
 from spacy import displacy
 
