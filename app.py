@@ -13,7 +13,7 @@ from utils import clip_text
 from datetime import datetime as dt
 import os
 
-GRAPH_FILENAME = str(dt.now().timestamp) + ".html"
+GRAPH_FILENAME = str(dt.now().timestamp()) + ".html"
 
 wiki_state_variables = {
     'has_run':False,
@@ -127,7 +127,7 @@ def show_wiki_hub_page():
 
     if len(st.session_state['wiki_suggestions']) != 0:
         num_buttons = len(st.session_state['wiki_suggestions'])
-        num_cols = num_buttons if num_buttons < 8 else 8
+        num_cols = num_buttons if 0 < num_buttons < 8 else 8
         columns = st.columns([1] * num_cols )
         for q in range(1 + num_buttons//num_cols):
             for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
@@ -158,7 +158,7 @@ def show_wiki_hub_page():
         components.html(source_code, width=720, height=600)
 
         num_buttons = len(st.session_state["nodes"])
-        num_cols = num_buttons if num_buttons < 7 else 7
+        num_cols = num_buttons if 0 < num_buttons < 7 else 7
         columns = st.columns([1] * num_cols + [1])
         print(st.session_state["nodes"])
 
