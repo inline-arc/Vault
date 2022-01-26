@@ -10,8 +10,10 @@ from streamlit.type_util import Key
 import rebel
 import wikipedia
 from utils import clip_text
+from datetime import datetime as dt
+import os
 
-GRAPH_FILENAME = "test.html"
+GRAPH_FILENAME = str(dt.now().timestamp) + ".html"
 
 wiki_state_variables = {
     'has_run':False,
@@ -71,6 +73,8 @@ def wiki_show_text(page_title):
                 st.session_state['wiki_suggestions'] = list(set(temp))
 
 def wiki_add_text(term):
+    if len(st.session_state['topics']) > 4:
+        return
     try:
         extra_text = clip_text(wikipedia.page(title=term, auto_suggest=False).summary)
         st.session_state['wiki_text'].append(extra_text)
@@ -88,7 +92,7 @@ def wiki_reset_session():
         del st.session_state[k]
 
 def free_text_generate():
-    text = st.session_state['free_text']
+    text = st.session_state['free_text'][0:500]
     rebel.generate_knowledge_graph([text], GRAPH_FILENAME)
     st.session_state['has_run'] = True
 
@@ -186,7 +190,7 @@ def show_free_text_hub_page():
         HtmlFile = open(GRAPH_FILENAME, 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
-
+        os.remove(GRAPH_FILENAME)
 
 if st.session_state['input_method'] == "wikipedia":
     wiki_init_state_variables()
