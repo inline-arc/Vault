@@ -13,14 +13,13 @@ from utils import clip_text
 from datetime import datetime as dt
 import os
 
-GRAPH_FILENAME = str(dt.now().timestamp()) + ".html"
 
 wiki_state_variables = {
     'has_run':False,
     'wiki_suggestions': [],
     'wiki_text' : [],
     'nodes':[],
-    "topics":[]
+    "topics":[],
 }
 
 free_text_state_variables = {
@@ -33,6 +32,8 @@ def wiki_init_state_variables():
             st.session_state[k] = v
 
 def wiki_generate_graph():
+    st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
+
     if 'wiki_text' not in st.session_state:
         return
     if len(st.session_state['wiki_text']) == 0:
@@ -41,7 +42,7 @@ def wiki_generate_graph():
     with st.spinner(text="Generating graph..."):
         texts = st.session_state['wiki_text']
         st.session_state['nodes'] = []
-        nodes = rebel.generate_knowledge_graph(texts, GRAPH_FILENAME)
+        nodes = rebel.generate_knowledge_graph(texts, st.session_state["GRAPH_FILENAME"])
         print("gen_graph", nodes)
         for n in nodes:
             n = n.lower()
@@ -92,8 +93,10 @@ def wiki_reset_session():
         del st.session_state[k]
 
 def free_text_generate():
+    st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
+
     text = st.session_state['free_text'][0:500]
-    rebel.generate_knowledge_graph([text], GRAPH_FILENAME)
+    rebel.generate_knowledge_graph([text], st.session_state["GRAPH_FILENAME"])
     st.session_state['has_run'] = True
 
 def free_text_layout():
@@ -153,10 +156,10 @@ def show_wiki_hub_page():
         """
         )
 
-        HtmlFile = open(GRAPH_FILENAME, 'r', encoding='utf-8')
+        HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
-
+        os.remove(st.session_state["GRAPH_FILENAME"])
         num_buttons = len(st.session_state["nodes"])
         num_cols = num_buttons if 0 < num_buttons < 7 else 7
         columns = st.columns([1] * num_cols + [1])
@@ -175,22 +178,29 @@ def show_free_text_hub_page():
 - Click generate!
 """
 )
+    st.sidebar.markdown(
+    """
+# How to expand the graph
+- Click a button on the right to expand that node
+- Only nodes that have wiki pages will be expanded
+- Hit the Generate button again to expand your graph!
+"""
+)
+
+    st.sidebar.markdown(
+    """
+    Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
+    The code can be found [here](https://github.com/Babelscape/rebel),
+    and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)
+    """
+    )
     st.sidebar.button("Reset", key="reset_key")
     free_text_layout()
     if st.session_state['has_run']:
-        st.sidebar.markdown(
-            """
-        # How to expand the graph
-        - Click a button on the right to expand that node
-        - Only nodes that have wiki pages will be expanded
-        - Hit the Generate button again to expand your graph!
-        """
-        )
-
-        HtmlFile = open(GRAPH_FILENAME, 'r', encoding='utf-8')
+        HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
-        os.remove(GRAPH_FILENAME)
+        os.remove(st.session_state["GRAPH_FILENAME"])
 
 if st.session_state['input_method'] == "wikipedia":
     wiki_init_state_variables()
