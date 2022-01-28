@@ -15,7 +15,7 @@ import os
 
 
 wiki_state_variables = {
-    'has_run':False,
+    'has_run_wiki':False,
     'wiki_suggestions': [],
     'wiki_text' : [],
     'nodes':[],
@@ -23,7 +23,7 @@ wiki_state_variables = {
 }
 
 free_text_state_variables = {
-    'has_run':False,
+    'has_run_free':False,
 }
 
 def wiki_init_state_variables():
@@ -52,7 +52,7 @@ def wiki_generate_graph():
             n = n.lower()
             if n not in st.session_state['topics']:
                 st.session_state['nodes'].append(n)
-        st.session_state['has_run'] = True
+        st.session_state['has_run_wiki'] = True
     st.success('Done!')
 
 def wiki_show_suggestion():
@@ -61,7 +61,7 @@ def wiki_show_suggestion():
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
             if text is not None:
-                subjects = text.split(",")
+                subjects = text.split(",")[:5]
                 for subj in subjects:
                     st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
 
@@ -98,7 +98,6 @@ def wiki_reset_session():
 
 def free_text_generate():
     st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
-
     text = st.session_state['free_text'][0:500]
     rebel.generate_knowledge_graph([text], st.session_state["GRAPH_FILENAME"])
     st.session_state['has_run'] = True
@@ -165,6 +164,8 @@ def show_wiki_hub_page():
     - Hit the Generate button again to expand your graph!
     """
     )
+    print(st.session_state)
+
     if st.session_state['has_run']:
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
@@ -191,7 +192,10 @@ def show_free_text_hub_page():
 
     st.sidebar.button("Reset", key="reset_key")
     free_text_layout()
+    print(st.session_state)
+
     if st.session_state['has_run']:
+        print(st.session_state)
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
@@ -201,6 +205,7 @@ if st.session_state['input_method'] == "wikipedia":
     wiki_init_state_variables()
     show_wiki_hub_page()
 else:
+    free_test_init_state_variables()
     show_free_text_hub_page()
 
 
