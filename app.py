@@ -54,7 +54,6 @@ def wiki_generate_graph():
         source_code = HtmlFile.read()
         st.session_state["html_wiki"] = source_code
         os.remove(st.session_state["GRAPH_FILENAME"])
-        print("gen_graph", nodes)
         for n in nodes:
             n = n.lower()
             if n not in st.session_state['topics']:
@@ -175,7 +174,6 @@ def show_wiki_hub_page():
     - Hit the Generate button again to expand your graph!
     """
     )
-    print(st.session_state)
 
     if st.session_state['has_run_wiki']:
 
@@ -183,7 +181,6 @@ def show_wiki_hub_page():
         num_buttons = len(st.session_state["nodes"])
         num_cols = num_buttons if 0 < num_buttons < 7 else 7
         columns = st.columns([1] * num_cols + [1])
-        print(st.session_state["nodes"])
 
         for q in range(1 + num_buttons//num_cols):
             for i, (c, s) in enumerate(zip(columns, st.session_state["nodes"][q*num_cols: (q+1)*num_cols])):
@@ -201,10 +198,8 @@ def show_free_text_hub_page():
 
     st.sidebar.button("Reset", key="reset_key")
     free_text_layout()
-    print(st.session_state)
 
     if st.session_state['has_run_free']:
-        print(st.session_state)
         components.html(st.session_state["html_free"], width=720, height=600)
 
 if st.session_state['input_method'] == "wikipedia":
