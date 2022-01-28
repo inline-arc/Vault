@@ -20,12 +20,12 @@ wiki_state_variables = {
     'wiki_text' : [],
     'nodes':[],
     "topics":[],
-    "html":""
+    "html_wiki":""
 }
 
 free_text_state_variables = {
     'has_run_free':False,
-    "html":""
+    "html_free":""
 
 }
 
@@ -53,7 +53,7 @@ def wiki_generate_graph():
         nodes = rebel.generate_knowledge_graph(texts, st.session_state["GRAPH_FILENAME"])
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
-        st.session_state["html"] = source_code
+        st.session_state["html_wiki"] = source_code
         os.remove(st.session_state["GRAPH_FILENAME"])
         print("gen_graph", nodes)
         for n in nodes:
@@ -110,7 +110,7 @@ def free_text_generate():
     rebel.generate_knowledge_graph([text], st.session_state["GRAPH_FILENAME"])
     HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
     source_code = HtmlFile.read()
-    st.session_state["html"] = source_code
+    st.session_state["html_free"] = source_code
     os.remove(st.session_state["GRAPH_FILENAME"])
     st.session_state['has_run_free'] = True
 
@@ -180,7 +180,7 @@ def show_wiki_hub_page():
 
     if st.session_state['has_run_wiki']:
 
-        components.html(st.session_state["html"], width=720, height=600)
+        components.html(st.session_state["html_wiki"], width=720, height=600)
         num_buttons = len(st.session_state["nodes"])
         num_cols = num_buttons if 0 < num_buttons < 7 else 7
         columns = st.columns([1] * num_cols + [1])
@@ -206,7 +206,7 @@ def show_free_text_hub_page():
 
     if st.session_state['has_run_free']:
         print(st.session_state)
-        components.html(st.session_state["html"], width=720, height=600)
+        components.html(st.session_state["html_free"], width=720, height=600)
 
 if st.session_state['input_method'] == "wikipedia":
     wiki_init_state_variables()
