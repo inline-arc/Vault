@@ -159,7 +159,7 @@ def show_wiki_hub_page():
     st.sidebar.markdown(
         """
     # How to expand the graph
-    - Click a button bellow the graph to expand that node
+    - Click a button below the graph to expand that node
      (Only nodes that have wiki pages will be expanded)
     - Hit the Generate button again to expand your graph!
     """
