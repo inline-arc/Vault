@@ -148,14 +148,12 @@ def show_wiki_hub_page():
     st.sidebar.markdown(
         """
     # How to expand the graph
-    - Click a button on the right to expand that node
-    - Only nodes that have wiki pages will be expanded
+    - Click a button bellow the graph to expand that node
+     (Only nodes that have wiki pages will be expanded)
     - Hit the Generate button again to expand your graph!
     """
     )
     if st.session_state['has_run']:
-
-
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
@@ -176,14 +174,6 @@ def show_free_text_hub_page():
 # How to
 - Enter a text you'd like to see as a graph.
 - Click generate!
-"""
-)
-    st.sidebar.markdown(
-    """
-# How to expand the graph
-- Click a button on the right to expand that node
-- Only nodes that have wiki pages will be expanded
-- Hit the Generate button again to expand your graph!
 """
 )
 
