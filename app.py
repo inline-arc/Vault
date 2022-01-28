@@ -27,6 +27,9 @@ free_text_state_variables = {
 }
 
 def wiki_init_state_variables():
+    for k in free_text_state_variables.keys():
+        del st.session_state[k]
+
     for k, v in wiki_state_variables.items():
         if k not in st.session_state:
             st.session_state[k] = v
@@ -103,6 +106,13 @@ def free_text_layout():
     st.text_input("Free text", key="free_text")
     st.button("Generate", on_click=free_text_generate, key="free_text_generate")
 
+def free_test_init_state_variables():
+    for k in wiki_state_variables.keys():
+        del st.session_state[k]
+
+    for k, v in free_text_state_variables.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
 
 st.title('REBELious knowledge graph generation')
 st.selectbox(
@@ -115,7 +125,7 @@ def show_wiki_hub_page():
 """
 # how to
 - Enter wikipedia search terms, separated by comma's
-- Choose one or more of the suggested pages
+- Choose one or more of the suggested pages (max 5)
 - Click generate!
 """
 )
