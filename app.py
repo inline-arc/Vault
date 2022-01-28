@@ -204,8 +204,8 @@ else:
 
 st.sidebar.markdown(
 """
-Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
+*Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
 The code can be found [here](https://github.com/Babelscape/rebel),
-and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)
+and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)*
 """
 )
