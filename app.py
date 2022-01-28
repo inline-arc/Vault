@@ -145,16 +145,16 @@ def show_wiki_hub_page():
 
     if len(st.session_state['wiki_text']) > 0:
         st.button("Generate", on_click=wiki_generate_graph, key="gen_graph")
-
-    if st.session_state['has_run']:
-        st.sidebar.markdown(
-            """
-        # How to expand the graph
-        - Click a button on the right to expand that node
-        - Only nodes that have wiki pages will be expanded
-        - Hit the Generate button again to expand your graph!
+    st.sidebar.markdown(
         """
-        )
+    # How to expand the graph
+    - Click a button on the right to expand that node
+    - Only nodes that have wiki pages will be expanded
+    - Hit the Generate button again to expand your graph!
+    """
+    )
+    if st.session_state['has_run']:
+
 
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
@@ -187,13 +187,6 @@ def show_free_text_hub_page():
 """
 )
 
-    st.sidebar.markdown(
-    """
-    Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
-    The code can be found [here](https://github.com/Babelscape/rebel),
-    and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)
-    """
-    )
     st.sidebar.button("Reset", key="reset_key")
     free_text_layout()
     if st.session_state['has_run']:
@@ -209,3 +202,10 @@ else:
     show_free_text_hub_page()
 
 
+st.sidebar.markdown(
+"""
+Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
+The code can be found [here](https://github.com/Babelscape/rebel),
+and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)
+"""
+)
