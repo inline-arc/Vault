@@ -28,7 +28,8 @@ free_text_state_variables = {
 
 def wiki_init_state_variables():
     for k in free_text_state_variables.keys():
-        del st.session_state[k]
+        if k in st.session_state:
+            del st.session_state[k]
 
     for k, v in wiki_state_variables.items():
         if k not in st.session_state:
@@ -108,7 +109,8 @@ def free_text_layout():
 
 def free_test_init_state_variables():
     for k in wiki_state_variables.keys():
-        del st.session_state[k]
+        if k in st.session_state:
+            del st.session_state[k]
 
     for k, v in free_text_state_variables.items():
         if k not in st.session_state:
