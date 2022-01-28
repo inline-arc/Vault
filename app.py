@@ -38,7 +38,6 @@ def wiki_init_state_variables():
         if k not in st.session_state:
             st.session_state[k] = v
 
-
 def wiki_generate_graph():
     st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
 
@@ -86,7 +85,7 @@ def wiki_show_text(page_title):
                 st.session_state['wiki_suggestions'] = list(set(temp))
 
 def wiki_add_text(term):
-    if len(st.session_state['topics']) > 4:
+    if len(st.session_state['wiki_text']) > 4:
         return
     try:
         extra_text = clip_text(wikipedia.page(title=term, auto_suggest=False).summary)
