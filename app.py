@@ -100,7 +100,7 @@ def free_text_generate():
     st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
     text = st.session_state['free_text'][0:500]
     rebel.generate_knowledge_graph([text], st.session_state["GRAPH_FILENAME"])
-    st.session_state['has_run'] = True
+    st.session_state['has_run_free'] = True
 
 def free_text_layout():
     st.text_input("Free text", key="free_text")
@@ -166,7 +166,7 @@ def show_wiki_hub_page():
     )
     print(st.session_state)
 
-    if st.session_state['has_run']:
+    if st.session_state['has_run_wiki']:
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, width=720, height=600)
@@ -194,7 +194,7 @@ def show_free_text_hub_page():
     free_text_layout()
     print(st.session_state)
 
-    if st.session_state['has_run']:
+    if st.session_state['has_run_free']:
         print(st.session_state)
         HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
         source_code = HtmlFile.read()
