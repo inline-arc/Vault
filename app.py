@@ -79,6 +79,8 @@ def wiki_show_text(page_title):
             page = wikipedia.page(title=page_title, auto_suggest=False)
             st.session_state['wiki_text'].append(clip_text(page.summary))
             st.session_state['topics'].append(page_title.lower())
+            st.session_state['wiki_suggestions'].remove(page_title)
+
         except wikipedia.DisambiguationError as e:
             with st.spinner(text="Woops, ambigious term, recalculating options..."):
                 st.session_state['wiki_suggestions'].remove(page_title)
@@ -91,9 +93,13 @@ def wiki_add_text(term):
     if len(st.session_state['wiki_text']) > 4:
         return
     try:
-        extra_text = clip_text(wikipedia.page(title=term, auto_suggest=False).summary)
+        page = wikipedia.page(title=term, auto_suggest=False)
+        extra_text = clip_text(page.summary)
+
         st.session_state['wiki_text'].append(extra_text)
         st.session_state['topics'].append(term.lower())
+        st.session_state['nodes'].remove(term)
+
     except wikipedia.DisambiguationError as e:
         print(e)
         with st.spinner(text="Woops, ambigious term, recalculating options..."):
