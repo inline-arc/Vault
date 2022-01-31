@@ -59,7 +59,8 @@ def wiki_generate_graph():
         for n in nodes:
             n = n.lower()
             if n not in st.session_state['topics']:
-                st.session_state['nodes'].append(n)
+                possible_topics = wikipedia.search(n, results = 3)
+                st.session_state['nodes'].extend(possible_topics)
         st.session_state['has_run_wiki'] = True
     st.success('Done!')
 
