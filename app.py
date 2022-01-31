@@ -178,7 +178,7 @@ def show_wiki_hub_page():
         for q in range(1 + num_buttons//num_cols):
             for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
                 with c:
-                    st.button(s, on_click=wiki_show_text, args=(s,), key=str(i)+s)
+                    st.button(s, on_click=wiki_show_text, args=(s,), key=str(i)+s+"wiki_suggestion")
 
     if len(st.session_state['wiki_text']) != 0:
         for i, t in enumerate(st.session_state['wiki_text']):
