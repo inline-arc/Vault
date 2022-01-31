@@ -98,7 +98,7 @@ def wiki_add_text(term):
         with st.spinner(text="Woops, ambigious term, recalculating options..."):
             st.session_state['nodes'].remove(term)
             temp = st.session_state['nodes'] + e.options[:3]
-            st.session_state['node'] = list(set(temp))
+            st.session_state['nodes'] = list(set(temp))
     except wikipedia.WikipediaException:
         st.session_state['nodes'].remove(term)
 
@@ -146,9 +146,9 @@ st.selectbox(
 def show_wiki_hub_page():
     st.sidebar.markdown(
 """
-# how to
+# How to
 - Enter wikipedia search terms, separated by comma's
-- Choose one or more of the suggested pages (max 5)
+- Choose one or more of the suggested topics (max. 5)
 - Click generate!
 """
 )
