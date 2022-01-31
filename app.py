@@ -104,6 +104,10 @@ def wiki_reset_session():
     for k in wiki_state_variables:
         del st.session_state[k]
 
+def free_reset_session():
+    for k in free_text_state_variables:
+        del st.session_state[k]
+
 def free_text_generate():
     st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
     text = st.session_state['free_text'][0:500]
@@ -127,7 +131,7 @@ def free_test_init_state_variables():
         if k not in st.session_state:
             st.session_state[k] = v
 
-st.title('REBELious knowledge graph generation')
+st.title('RE-belle \n knowledge graph generation')
 st.selectbox(
      'input method',
      ('wikipedia', 'free text'),  key="input_method")
@@ -197,8 +201,8 @@ def show_free_text_hub_page():
 - Click generate!
 """
 )
+    st.sidebar.button("Reset", on_click=free_reset_session, key="free_reset_key")
 
-    st.sidebar.button("Reset", key="reset_key")
     free_text_layout()
 
     if st.session_state['has_run_free']:

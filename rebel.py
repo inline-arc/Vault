@@ -72,7 +72,7 @@ def generate_knowledge_graph(texts: List[str], filename: str):
     return nodes
 
 
-@lru_cache
+@lru_cache(maxsize=16)
 def generate_partial_graph(text: str):
     triplet_extractor = pipeline('text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
     a = triplet_extractor(text, return_tensors=True, return_text=False)[0]["generated_token_ids"]["output_ids"]
