@@ -131,7 +131,11 @@ def free_test_init_state_variables():
         if k not in st.session_state:
             st.session_state[k] = v
 
-st.title('RE:belle \n knowledge graph generation')
+st.title('RE:Belle')
+st.markdown(
+"""
+## Building Beautiful Knowledge Graphs With REBEL
+""")
 st.selectbox(
      'input method',
      ('wikipedia', 'free text'),  key="input_method")
