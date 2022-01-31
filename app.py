@@ -89,7 +89,7 @@ def wiki_show_text(page_title):
                 temp = st.session_state['wiki_suggestions'] + e.options[:3]
                 st.session_state['wiki_suggestions'] = list(set(temp))
         except wikipedia.WikipediaException:
-            st.session_state['nodes'].remove(page_title)
+            st.session_state['wiki_suggestions'].remove(page_title)
 
 def wiki_add_text(term):
     if len(st.session_state['wiki_text']) > 4:
