@@ -32,13 +32,10 @@ def generate_knowledge_graph(texts: List[str], filename: str):
     doc = nlp("\n".join(texts).lower())
     NERs = [ent.text for ent in doc.ents]
     NER_types =  [ent.label_ for ent in doc.ents]
-    for nr, nrt in zip(NERs, NER_types):
-        print(nr, nrt)
 
     triplets = []
     for triplet in texts:
         triplets.extend(generate_partial_graph(triplet))
-    print(generate_partial_graph.cache_info())
     heads = [ t["head"].lower() for t in triplets]
     tails = [ t["tail"].lower() for t in triplets]
 
@@ -77,7 +74,6 @@ def generate_knowledge_graph(texts: List[str], filename: str):
 
 @lru_cache
 def generate_partial_graph(text: str):
-    print(text[0:20], hash(text))
     triplet_extractor = pipeline('text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
     a = triplet_extractor(text, return_tensors=True, return_text=False)[0]["generated_token_ids"]["output_ids"]
     extracted_text = triplet_extractor.tokenizer.batch_decode(a)
