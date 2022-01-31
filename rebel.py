@@ -46,7 +46,10 @@ def generate_knowledge_graph(texts: List[str], filename: str):
         if n in NERs:
             NER_type = NER_types[NERs.index(n)]
             if NER_type in NER_types:
-                color = DEFAULT_LABEL_COLORS[NER_type]
+                if NER_type in DEFAULT_LABEL_COLORS.keys():
+                    color = DEFAULT_LABEL_COLORS[NER_type]
+                else:
+                    color = "#666666"
                 net.add_node(n, title=NER_type, shape="circle", color=color)
             else:
                 net.add_node(n, shape="circle")
@@ -57,7 +60,8 @@ def generate_knowledge_graph(texts: List[str], filename: str):
     stringify_trip = lambda x : x["tail"] + x["head"] + x["type"].lower()
     for triplet in triplets:
         if stringify_trip(triplet) not in unique_triplets:
-            net.add_edge(triplet["head"].lower(), triplet["tail"].lower(), title=triplet["type"], label=triplet["type"])
+            net.add_edge(triplet["head"].lower(), triplet["tail"].lower(),
+                         title=triplet["type"], label=triplet["type"])
             unique_triplets.add(stringify_trip(triplet))
 
     net.repulsion(
