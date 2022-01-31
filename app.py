@@ -131,7 +131,7 @@ def free_text_generate():
     st.session_state['has_run_free'] = True
 
 def free_text_layout():
-    st.text_area("Free text", key="free_text", height=5, value="Platypuses are small, shy animals. They have a flattened head and body to help them glide through the water. Their fur, dark brown on top and tan on their bellies, is thick and repels water to keep them warm and dry even after hours of swimming.")
+    st.text_area("Free text", key="free_text", height=5, value="Tardigrades, known colloquially as water bears or moss piglets, are a phylum of eight-legged segmented micro-animals.")
     st.button("Generate", on_click=free_text_generate, key="free_text_generate")
 
 def free_test_init_state_variables():
