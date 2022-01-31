@@ -95,13 +95,13 @@ def wiki_add_text(term):
         st.session_state['wiki_text'].append(extra_text)
         st.session_state['topics'].append(term.lower())
     except wikipedia.DisambiguationError as e:
-        print(e.error)
+        print(e)
         with st.spinner(text="Woops, ambigious term, recalculating options..."):
             st.session_state['nodes'].remove(term)
             temp = st.session_state['nodes'] + e.options[:3]
             st.session_state['nodes'] = list(set(temp))
     except wikipedia.WikipediaException as e:
-        print(e.error)
+        print(e)
         st.session_state['nodes'].remove(term)
 
 def wiki_reset_session():
