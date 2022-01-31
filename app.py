@@ -29,6 +29,8 @@ free_text_state_variables = {
 
 }
 
+BUTTON_COLUMS = 5
+
 def wiki_init_state_variables():
     for k in free_text_state_variables.keys():
         if k in st.session_state:
@@ -161,7 +163,7 @@ def show_wiki_hub_page():
 
     if len(st.session_state['wiki_suggestions']) != 0:
         num_buttons = len(st.session_state['wiki_suggestions'])
-        num_cols = num_buttons if 0 < num_buttons < 8 else 8
+        num_cols = num_buttons if 0 < num_buttons < BUTTON_COLUMS else BUTTON_COLUMS
         columns = st.columns([1] * num_cols )
         for q in range(1 + num_buttons//num_cols):
             for i, (c, s) in enumerate(zip(columns, st.session_state['wiki_suggestions'][q*num_cols: (q+1)*num_cols])):
@@ -189,7 +191,7 @@ def show_wiki_hub_page():
 
         components.html(st.session_state["html_wiki"], width=720, height=600)
         num_buttons = len(st.session_state["nodes"])
-        num_cols = num_buttons if 0 < num_buttons < 7 else 7
+        num_cols = num_buttons if 0 < num_buttons < BUTTON_COLUMS else BUTTON_COLUMS
         columns = st.columns([1] * num_cols + [1])
 
         for q in range(1 + num_buttons//num_cols):
