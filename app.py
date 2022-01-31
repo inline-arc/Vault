@@ -70,7 +70,7 @@ def wiki_show_suggestion():
     with st.spinner(text="fetching wiki topics..."):
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
-            if text is not None:
+            if text is not None and text is not "":
                 subjects = text.split(",")[:5]
                 for subj in subjects:
                     st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
