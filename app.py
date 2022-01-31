@@ -165,7 +165,7 @@ def show_wiki_hub_page():
     st.sidebar.button("Reset", on_click=wiki_reset_session, key="reset_key")
     cols = st.columns([8, 1])
     with cols[0]:
-        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text")
+        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", value="the wiki rabbit hole")
     with cols[1]:
         st.text('')
         st.text('')
