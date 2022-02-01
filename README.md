@@ -1,7 +1,7 @@
 ---
 title: "RE:Belle"
 emoji: 🌐
-colorFrom: orange
+colorFrom: red
 colorTo: blue
 sdk: streamlit
 app_file: app.py
