@@ -154,6 +154,8 @@ st.selectbox(
 
 
 def show_wiki_hub_page():
+    st.sidebar.button("Reset", on_click=wiki_reset_session, key="reset_key")
+
     st.sidebar.markdown(
 """
 ## How To Create a Graph:
@@ -162,7 +164,6 @@ def show_wiki_hub_page():
 - Click generate!
 """
 )
-    st.sidebar.button("Reset", on_click=wiki_reset_session, key="reset_key")
     cols = st.columns([8, 1])
     with cols[0]:
         st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", value="the wiki rabbit hole")
@@ -210,6 +211,7 @@ def show_wiki_hub_page():
                     st.button(s, on_click=wiki_add_text, args=(s,), key=str(i)+s)
 
 def show_free_text_hub_page():
+    st.sidebar.button("Reset", on_click=free_reset_session, key="free_reset_key")
     st.sidebar.markdown(
 """
 ## How To Create a Graph:
@@ -217,7 +219,6 @@ def show_free_text_hub_page():
 - Click generate!
 """
 )
-    st.sidebar.button("Reset", on_click=free_reset_session, key="free_reset_key")
 
     free_text_layout()
 
