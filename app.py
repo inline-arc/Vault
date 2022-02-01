@@ -146,7 +146,7 @@ def free_test_init_state_variables():
 st.title('RE:Belle')
 st.markdown(
 """
-# Building Beautiful Knowledge Graphs With REBEL
+### Building Beautiful Knowledge Graphs With REBEL
 """)
 st.selectbox(
      'input method',
