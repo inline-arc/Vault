@@ -146,7 +146,7 @@ def free_test_init_state_variables():
 st.title('RE:Belle')
 st.markdown(
 """
-## Building Beautiful Knowledge Graphs With REBEL
+# Building Beautiful Knowledge Graphs With REBEL
 """)
 st.selectbox(
      'input method',
@@ -156,7 +156,7 @@ st.selectbox(
 def show_wiki_hub_page():
     st.sidebar.markdown(
 """
-# How to
+## How To Create a Graph:
 - Enter wikipedia search terms, separated by comma's
 - Choose one or more of the suggested topics (max. 5)
 - Click generate!
@@ -190,7 +190,7 @@ def show_wiki_hub_page():
         st.button("Generate", on_click=wiki_generate_graph, key="gen_graph")
     st.sidebar.markdown(
         """
-    # How to expand the graph
+    ## How to expand the graph
     - Click a button below the graph to expand that node
      (Only nodes that have wiki pages will be expanded)
     - Hit the Generate button again to expand your graph!
@@ -212,7 +212,7 @@ def show_wiki_hub_page():
 def show_free_text_hub_page():
     st.sidebar.markdown(
 """
-# How to
+## How To Create a Graph:
 - Enter a text you'd like to see as a graph.
 - Click generate!
 """
@@ -235,7 +235,7 @@ else:
 
 st.sidebar.markdown(
 """
-### What This Is And Why We Built it
+## What This Is And Why We Built it
 
 This space shows how a transformer network can be used to convert *human* text into a computer-queryable format: a **knowledge graph**. Knowledge graphs are graphs where each node (or *vertex* if you're fancy) represent a concept/person/thing and each edge the link between those concepts. If you'd like to know more, you can read [this blogpost](https://www.ml6.eu/knowhow/knowledge-graphs-an-introduction-and-business-applications).
 
