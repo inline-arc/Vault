@@ -14,6 +14,7 @@ from datetime import datetime as dt
 import os
 
 
+
 wiki_state_variables = {
     'has_run_wiki':False,
     'wiki_suggestions': [],
