@@ -13,7 +13,7 @@ from utils import clip_text
 from datetime import datetime as dt
 import os
 
-
+MAX_TOPICS = 3
 
 wiki_state_variables = {
     'has_run_wiki':False,
@@ -60,7 +60,7 @@ def wiki_generate_graph():
         for n in nodes:
             n = n.lower()
             if n not in st.session_state['topics']:
-                possible_topics = wikipedia.search(n, results = 3)
+                possible_topics = wikipedia.search(n, results = 2)
                 st.session_state['nodes'].extend(possible_topics)
         st.session_state['nodes'] = list(set(st.session_state['nodes']))
         st.session_state['has_run_wiki'] = True
@@ -72,7 +72,7 @@ def wiki_show_suggestion():
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
             if (text is not None) and (text is not ""):
-                subjects = text.split(",")[:5]
+                subjects = text.split(",")[:MAX_TOPICS]
                 for subj in subjects:
                     st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
 
@@ -93,7 +93,7 @@ def wiki_show_text(page_title):
             st.session_state['wiki_suggestions'].remove(page_title)
 
 def wiki_add_text(term):
-    if len(st.session_state['wiki_text']) > 4:
+    if len(st.session_state['wiki_text']) > MAX_TOPICS:
         return
     try:
         page = wikipedia.page(title=term, auto_suggest=False)
@@ -123,7 +123,7 @@ def free_reset_session():
 
 def free_text_generate():
     st.session_state["GRAPH_FILENAME"] = str(dt.now().timestamp()*1000) + ".html"
-    text = st.session_state['free_text'][0:500]
+    text = st.session_state['free_text'][0:100]
     rebel.generate_knowledge_graph([text], st.session_state["GRAPH_FILENAME"])
     HtmlFile = open(st.session_state["GRAPH_FILENAME"], 'r', encoding='utf-8')
     source_code = HtmlFile.read()
