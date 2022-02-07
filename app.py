@@ -30,7 +30,7 @@ free_text_state_variables = {
 
 }
 
-BUTTON_COLUMS = 5
+BUTTON_COLUMS = 4
 
 def wiki_init_state_variables():
     for k in free_text_state_variables.keys():
@@ -71,7 +71,7 @@ def wiki_show_suggestion():
     with st.spinner(text="fetching wiki topics..."):
         if st.session_state['input_method'] == "wikipedia":
             text = st.session_state.text
-            if (text is not None) and (text is not ""):
+            if (text is not None) and (text != ""):
                 subjects = text.split(",")[:MAX_TOPICS]
                 for subj in subjects:
                     st.session_state['wiki_suggestions'] += wikipedia.search(subj, results = 3)
@@ -161,13 +161,13 @@ def show_wiki_hub_page():
 """
 ## How To Create a Graph:
 - Enter wikipedia search terms, separated by comma's
-- Choose one or more of the suggested topics (max. 5)
+- Choose one or more of the suggested topics (max. 3)
 - Click generate!
 """
 )
     cols = st.columns([8, 1])
     with cols[0]:
-        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", value="the wiki rabbit hole")
+        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", placeholder="graphs, are, awesome")
     with cols[1]:
         st.text('')
         st.text('')
