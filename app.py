@@ -167,7 +167,7 @@ def show_wiki_hub_page():
 )
     cols = st.columns([8, 1])
     with cols[0]:
-        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", placeholder="graphs, are, awesome")
+        st.text_input("wikipedia search term", on_change=wiki_show_suggestion, key="text", value="graphs, are, awesome")
     with cols[1]:
         st.text('')
         st.text('')
