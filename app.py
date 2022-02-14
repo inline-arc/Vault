@@ -161,7 +161,7 @@ def show_wiki_hub_page():
 """
 ## How To Create a Graph:
 - Enter wikipedia search terms, separated by comma's
-- Choose one or more of the suggested topics (max. 3)
+- Choose one or more of the suggested topics (max 3)
 - Click generate!
 """
 )
