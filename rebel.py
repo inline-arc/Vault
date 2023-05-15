@@ -3,7 +3,6 @@ from transformers import pipeline
 from pyvis.network import Network
 from functools import lru_cache
 import spacy
-from spacy import displacy
 
 import streamlit as st
 
@@ -31,9 +30,9 @@ DEFAULT_LABEL_COLORS = {
 
 @st.experimental_singleton(max_entries=1)
 def get_pipeline():
-    triplet_extractor = pipeline('text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
+    triplet_extractor = pipeline(
+        'text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
     return triplet_extractor
-
 
 
 @st.experimental_singleton(max_entries=1)
@@ -47,13 +46,13 @@ def generate_knowledge_graph(texts: List[str], filename: str):
 
     doc = nlp("\n".join(texts).lower())
     NERs = [ent.text for ent in doc.ents]
-    NER_types =  [ent.label_ for ent in doc.ents]
+    NER_types = [ent.label_ for ent in doc.ents]
 
     triplets = []
     for triplet in texts:
         triplets.extend(generate_partial_graph(triplet))
-    heads = [ t["head"].lower() for t in triplets]
-    tails = [ t["tail"].lower() for t in triplets]
+    heads = [t["head"].lower() for t in triplets]
+    tails = [t["tail"].lower() for t in triplets]
 
     nodes = list(set(heads + tails))
     net = Network(directed=True, width="700px", height="700px")
@@ -73,7 +72,7 @@ def generate_knowledge_graph(texts: List[str], filename: str):
             net.add_node(n, shape="circle")
 
     unique_triplets = set()
-    stringify_trip = lambda x : x["tail"] + x["head"] + x["type"].lower()
+    def stringify_trip(x): return x["tail"] + x["head"] + x["type"].lower()
     for triplet in triplets:
         if stringify_trip(triplet) not in unique_triplets:
             net.add_edge(triplet["head"].lower(), triplet["tail"].lower(),
@@ -95,7 +94,8 @@ def generate_knowledge_graph(texts: List[str], filename: str):
 @lru_cache(maxsize=16)
 def generate_partial_graph(text: str):
     triplet_extractor = get_pipeline()
-    a = triplet_extractor(text, return_tensors=True, return_text=False)[0]["generated_token_ids"]["output_ids"]
+    a = triplet_extractor(text, return_tensors=True, return_text=False)[
+        0]["generated_token_ids"]["output_ids"]
     extracted_text = triplet_extractor.tokenizer.batch_decode(a)
     extracted_triplets = extract_triplets(extracted_text[0])
     return extracted_triplets
@@ -113,13 +113,15 @@ def extract_triplets(text):
         if token == "<triplet>":
             current = 't'
             if relation != '':
-                triplets.append({'head': subject.strip(), 'type': relation.strip(),'tail': object_.strip()})
+                triplets.append(
+                    {'head': subject.strip(), 'type': relation.strip(), 'tail': object_.strip()})
                 relation = ''
             subject = ''
         elif token == "<subj>":
             current = 's'
             if relation != '':
-                triplets.append({'head': subject.strip(), 'type': relation.strip(),'tail': object_.strip()})
+                triplets.append(
+                    {'head': subject.strip(), 'type': relation.strip(), 'tail': object_.strip()})
             object_ = ''
         elif token == "<obj>":
             current = 'o'
@@ -132,7 +134,7 @@ def extract_triplets(text):
             elif current == 'o':
                 relation += ' ' + token
     if subject != '' and relation != '' and object_ != '':
-        triplets.append({'head': subject.strip(), 'type': relation.strip(),'tail': object_.strip()})
+        triplets.append(
+            {'head': subject.strip(), 'type': relation.strip(), 'tail': object_.strip()})
 
     return triplets
-
