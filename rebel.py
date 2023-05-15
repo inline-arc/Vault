@@ -27,8 +27,23 @@ DEFAULT_LABEL_COLORS = {
     "PERCENT": "#e4e7d2",
 }
 
-def generate_knowledge_graph(texts: List[str], filename: str):
+
+@st.experimental_singleton(max_entries=1)
+def get_pipeline():
+    triplet_extractor = pipeline('text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
+    return triplet_extractor
+
+
+
+@st.experimental_singleton(max_entries=1)
+def load_spacy():
     nlp = spacy.load("en_core_web_sm")
+    return nlp
+
+
+def generate_knowledge_graph(texts: List[str], filename: str):
+    nlp = load_spacy()
+
     doc = nlp("\n".join(texts).lower())
     NERs = [ent.text for ent in doc.ents]
     NER_types =  [ent.label_ for ent in doc.ents]
@@ -78,7 +93,7 @@ def generate_knowledge_graph(texts: List[str], filename: str):
 
 @lru_cache(maxsize=16)
 def generate_partial_graph(text: str):
-    triplet_extractor = pipeline('text2text-generation', model='Babelscape/rebel-large', tokenizer='Babelscape/rebel-large')
+    triplet_extractor = get_pipeline()
     a = triplet_extractor(text, return_tensors=True, return_text=False)[0]["generated_token_ids"]["output_ids"]
     extracted_text = triplet_extractor.tokenizer.batch_decode(a)
     extracted_triplets = extract_triplets(extracted_text[0])
