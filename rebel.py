@@ -5,6 +5,7 @@ from functools import lru_cache
 import spacy
 from spacy import displacy
 
+import streamlit as st
 
 DEFAULT_LABEL_COLORS = {
     "ORG": "#7aecec",
