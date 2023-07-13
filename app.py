@@ -1,11 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-<<<<<<< HEAD
-=======
-import networkx as nx
-import matplotlib.pyplot as plt
-from pyvis.network import Network
->>>>>>> 91c8e568c30c6d6761629f102cbb617239e13d26
 import rebel
 import wikipedia
 from utils import clip_text
@@ -26,10 +20,6 @@ wiki_state_variables = {
 free_text_state_variables = {
     'has_run_free': False,
     "html_free": ""
-<<<<<<< HEAD
-=======
-
->>>>>>> 91c8e568c30c6d6761629f102cbb617239e13d26
 }
 
 BUTTON_COLUMS = 4
