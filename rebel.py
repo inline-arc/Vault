@@ -4,7 +4,6 @@ from pyvis.network import Network
 from functools import lru_cache
 import spacy
 
-import streamlit as st
 
 DEFAULT_LABEL_COLORS = {
     "ORG": "#7aecec",
@@ -29,8 +28,7 @@ DEFAULT_LABEL_COLORS = {
 
 
 def generate_knowledge_graph(texts: List[str], filename: str):
-    nlp = load_spacy()
-
+    nlp = spacy.load("en_core_web_sm")
     doc = nlp("\n".join(texts).lower())
     NERs = [ent.text for ent in doc.ents]
     NER_types = [ent.label_ for ent in doc.ents]
