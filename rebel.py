@@ -3,6 +3,7 @@ from transformers import pipeline
 from pyvis.network import Network
 from functools import lru_cache
 import spacy
+import sys
 
 
 DEFAULT_LABEL_COLORS = {

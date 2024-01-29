@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from streamlit_lottie import st_lottie
 import rebel
 import wikipedia
 from utils import clip_text
@@ -152,7 +153,10 @@ def free_test_init_state_variables():
             st.session_state[k] = v
 
 
-st.title('RE:Belle')
+
+
+st.title('MIND-MAP GEN 🧠')
+st.lottie("https://lottie.host/5eaa4aff-8359-46d2-a32d-d67813b31b44/wtNdjTRPUW.json", key="user", height="100px")
 st.markdown(
     """
 ### Building Beautiful Knowledge Graphs With REBEL
@@ -163,17 +167,8 @@ st.selectbox(
 
 
 def show_wiki_hub_page():
-    st.sidebar.button("Reset", on_click=wiki_reset_session, key="reset_key")
 
-    st.sidebar.markdown(
-        """
-## How To Create a Graph:
-- Enter wikipedia search terms, separated by comma's
-- Choose one or more of the suggested topics (max 3)
-- Click generate!
-"""
-    )
-    cols = st.columns([8, 1])
+    cols = st.columns([6, 1])
     with cols[0]:
         st.text_input("wikipedia search term", on_change=wiki_show_suggestion,
                       key="text", value="graphs, are, awesome")
@@ -201,14 +196,7 @@ def show_wiki_hub_page():
 
     if len(st.session_state['wiki_text']) > 0:
         st.button("Generate", on_click=wiki_generate_graph, key="gen_graph")
-    st.sidebar.markdown(
-        """
-    ## How to expand the graph
-    - Click a button below the graph to expand that node
-     (Only nodes that have wiki pages will be expanded)
-    - Hit the Generate button again to expand your graph!
-    """
-    )
+  
 
     if st.session_state['has_run_wiki']:
 
@@ -227,13 +215,7 @@ def show_wiki_hub_page():
 def show_free_text_hub_page():
     st.sidebar.button("Reset", on_click=free_reset_session,
                       key="free_reset_key")
-    st.sidebar.markdown(
-        """
-## How To Create a Graph:
-- Enter a text you'd like to see as a graph.
-- Click generate!
-"""
-    )
+    
 
     free_text_layout()
 
@@ -249,22 +231,3 @@ else:
     show_free_text_hub_page()
 
 
-st.sidebar.markdown(
-    """
-## What This Is And Why We Built it
-
-This space shows how a transformer network can be used to convert *human* text into a computer-queryable format: a **knowledge graph**. Knowledge graphs are graphs where each node (or *vertex* if you're fancy) represent a concept/person/thing and each edge the link between those concepts. If you'd like to know more, you can read [this blogpost](https://www.ml6.eu/knowhow/knowledge-graphs-an-introduction-and-business-applications).
-
-Knowledge graphs aren't just cool to look at, they are an extremely versatile way of storing data, and are used in machine learning to perform tasks like fraud detection. You can read more about the applications of knowledge graphs in ML in [this blogpost](https://blog.ml6.eu/how-are-knowledge-graphs-and-machine-learning-related-ff6f5c1760b5).
-
-There is one problem though: building knowledge graphs from scratch is a time-consuming and tedious task, so it would be a lot easier if we could leverage machine learning to **create** them from existing texts. This demo shows how a model named **REBEL** has been trained to do just that: it reads summaries from Wikipedia (or any other text you input), and generates a graph containing the information it distills from the text.
-"""
-)
-
-st.sidebar.markdown(
-    """
-*Credits for the REBEL model go out to Pere-Lluís Huguet Cabot and Roberto Navigli.
-The code can be found [here](https://github.com/Babelscape/rebel),
-and the original paper [here](https://github.com/Babelscape/rebel/blob/main/docs/EMNLP_2021_REBEL__Camera_Ready_.pdf)*
-"""
-)
