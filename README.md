@@ -1,12 +1,3 @@
 - [ ] pdf ai chatbot
 - [x] visual graphics ai (mindmap)
-- [ ] ocr image pdf to text (pro)
-- [ ] summarize model
-- [ ] QnA model
-- [ ] progress heatmapper
-- [ ] presentation assistance
-- [ ] notes app
-- [ ] whiteboard
-- [ ] multi pdf
-- [ ] MathGPT
-- [ ] youtube video ai  
+  
